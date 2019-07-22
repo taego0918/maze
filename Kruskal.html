@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        body{
+            margin: 0px;
+            padding: 0px;
+        }
+        .main{
+            position: relative;
+            width: 600px;
+            height: 600px;
+            margin: auto;
+        }
+        .main div{
+            /* border: 1px solid #333333; */
+            height: 60px;
+            width : 60px;
+            position: absolute;
+            text-align: center;
+            line-height: 60px;
+            z-index: 1;
+        }
+        .main .player{
+            position : absolute;
+            background-color : #FF0000;
+            border-radius: 30px;
+            z-index: 2;
+            transition: 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="main"></div>
+    
+    <script>
+        let Kruskal = function(){
+            let self = this;
+            self.main = document.getElementsByClassName('main')[0];
+            self.w = 10; 
+            self.h = 10; 
+            self.i = 0;
+            self.playerPos;
+            self.player = document.createElement('div');
+            
+            self.getRandom = function(min,max){
+                return parseInt(Math.random()* (max - min + 1 ))+min;
+            };
+
+            self.init = function(){
+                for(let y = 0;y<self.h;y++){
+                    for(let x = 0;x<self.w;x++){
+                        let div = document.createElement("div");
+                        div.style.top =  y*60 +'px';
+                        div.style.left = x*60 +'px';
+                        /* border: 1px solid #333333; */
+                        div.className = 'grid';
+                        div.style.borderRight = '1px solid #333333';
+                        div.style.borderTop = '1px solid #333333';
+                        div.style.borderLeft = '1px solid #333333';
+                        div.style.borderBottom = '1px solid #333333';
+                        div.innerHTML = self.i;
+                        self.i++;
+                        self.main.appendChild(div);
+                    }
+                }
+            }
+
+            self.assimilate = function(newNum,oldNum){
+                let div = self.main.getElementsByClassName('grid');
+                for(let i = 0;i< self.w*self.h;i++){
+                    if(div[i].innerHTML === oldNum){
+                        div[i].innerHTML = newNum;
+                    }    
+                }
+            }
+
+            self.sort =function(){
+                let num = self.getRandom(0, self.w * self.h -1);
+                let direction = ['top','right','bottom','left'];
+                let div = self.main.getElementsByClassName('grid');
+                if(num%10 ===0){direction.splice(3, 1)};
+                if(parseInt(num/10) === self.h-1){direction.splice(2, 1)};
+                if(num%10 ===9){direction.splice(1, 1)};
+                if(parseInt(num/10) === 0){direction.splice(0, 1)};
+                let chkDirection = direction[self.getRandom(0,direction.length)]; 
+                let oldNum;
+                switch(chkDirection){
+                    case 'top':
+                        oldNum = num-10;
+                        if(div[num].innerHTML === div[oldNum].innerHTML){
+                            return self.sort();
+                        }
+                            div[num].style.borderTop = 'none';
+                            div[oldNum].style.borderBottom = 'none';
+                            self.assimilate(div[num].innerHTML , div[oldNum].innerHTML);
+                        break;
+                    case 'right':
+                        oldNum = num +1;
+                        if(div[num].innerHTML !== div[oldNum].innerHTML){
+                            return self.sort();
+                        }
+                            div[num].style.borderRight  = 'none';
+                            div[oldNum].style.borderLeft  = 'none';
+                            self.assimilate(div[num].innerHTML , div[oldNum].innerHTML);
+                        break
+                    case 'bottom':
+                        oldNum = num+10;
+                        if(div[num].innerHTML === div[oldNum].innerHTML){
+                            return self.sort();
+                        }
+                            div[num].style.borderBottom = 'none';
+                            div[oldNum].style.borderTop  = 'none';
+                            self.assimilate(div[num].innerHTML , div[oldNum].innerHTML);
+                        break;
+                    case 'left':
+                        oldNum = num -1;
+                        if(div[num].innerHTML === div[oldNum].innerHTML){
+                            return self.sort();
+                        }
+                            div[num].style.borderLeft  = 'none';
+                            div[oldNum].style.borderRight  = 'none';
+                            self.assimilate(div[num].innerHTML , div[oldNum].innerHTML);
+                        
+                        break;
+                    default:
+                        break;
+                }
+                return self.check();
+            }
+
+            self.check = function(){
+                let num;
+                let div = self.main.getElementsByClassName('grid');
+                num = div[0].innerHTML;
+                for(let i=0;i < div.length;i++){
+                    if( num !== div[i].innerHTML){
+                            self.sort();
+                        return false;
+                    }
+                }
+                return initPlayer();
+            }
+
+        document.addEventListener('keydown', function (e) {
+            var key = e.which || e.keyCode;
+            let div
+            switch (key) {
+                case 87://w
+                case 38://up
+                    console.log('up');
+                    div = document.getElementsByClassName('grid')[self.playerPos];
+                    if(div.style.borderTop === 'none'){
+                        self.playerPos -=10;9
+                    }
+                    break;
+                case 65://a
+                case 37://left
+                    console.log('left');
+                    div = document.getElementsByClassName('grid')[self.playerPos];
+                    if(div.style.borderLeft === 'none'){
+                        self.playerPos -=1;
+                    }
+                    break;
+                case 68://d
+                case 39://right
+                    console.log('rigth');
+                    div = document.getElementsByClassName('grid')[self.playerPos];
+                    if(div.style.borderRight === 'none'){
+                        self.playerPos +=1;
+                    }
+                    break;
+                case 83://s
+                case 40://down
+                    console.log('down');
+                    div = document.getElementsByClassName('grid')[self.playerPos];
+                    if(div.style.borderBottom === 'none'){
+                        self.playerPos +=10;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            self.player.style.top = parseInt(self.playerPos/10) * 60 +'px';
+            self.player.style.left = (self.playerPos%10) * 60 +'px';
+        });
+        
+        let initPlayer = function(){
+            console.log('a');
+            self.playerPos = self.getRandom(90,99);
+            self.player.className = 'player';
+            self.player.style.top = parseInt(self.playerPos/10) * 60 +'px';
+            self.player.style.left = (self.playerPos%10) * 60 +'px';
+            self.main.appendChild(self.player);
+        }
+        
+        }
+        let kruskal = new Kruskal();
+            kruskal.init();
+            kruskal.sort();
+    </script>
+</body>
+</html>

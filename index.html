@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<head>
+    <style>
+        body{
+            margin: 0px;
+            padding: 0px;
+            overflow: hidden;
+        }
+        .main{
+            position: absolute;
+            background-color: rgba(255,255,255,0.5);
+            width: 600px;
+            height: 600px;
+            margin: auto;
+        }
+        .main div{
+            /* border: 1px solid #333333; */
+            height: 60px;
+            width : 60px;
+            position: absolute;
+            text-align: center;
+            line-height: 60px;
+            z-index: 1;
+        }
+        .main .player{
+            position : absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 30px 52.0px 30px;
+            border-color: transparent transparent #FF0000 transparent;
+            z-index: 2;
+            transition: 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="main"></div>
+    <script src="https://unpkg.com/three"></script>
+    <script src="index.js"></script>
+</body>
+</html>
