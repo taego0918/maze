@@ -59,13 +59,19 @@ function init (_num) {
 
         //地板
         var geometry = new THREE.PlaneGeometry(100,100);
-        var material = new THREE.MeshBasicMaterial( {color: 0xffff00, side: THREE.DoubleSide} );
+        var material = new THREE.MeshBasicMaterial( {color: 0x000000, side: THREE.DoubleSide} );
         var floor = new THREE.Mesh( geometry, material );
         floor.position.x = 45;
         floor.position.y = -5;
         floor.position.z = 45;
         floor.rotation.x = 90 * Math.PI / 180;
         scene.add( floor );
+        var ceiling = new THREE.Mesh( geometry, material );
+        ceiling.position.x = 45;
+        ceiling.position.y = 5;
+        ceiling.position.z = 45;
+        ceiling.rotation.x = 90 * Math.PI / 180;
+        scene.add( ceiling );
 
         // 将渲染器的输出（此处是 canvas 元素）插入到 body 中
         document.body.appendChild(renderer.domElement);
@@ -195,6 +201,8 @@ let Kruskal = function(){
     self.h = 10; 
     self.i = 0;
     self.playerPos;
+    self.direction = 0;
+    self.directionList = ['up','rigth','down','left']
     self.player = document.createElement('div');
     
     self.getRandom = function(min,max){
@@ -293,6 +301,40 @@ let Kruskal = function(){
         }
         return initPlayer();
     }
+    let move = function(_direction){
+        let div;
+        switch (_direction) {
+            case 'up':
+                div = document.getElementsByClassName('grid')[self.playerPos];
+                if(div.style.borderTop === 'none'){
+                    self.playerPos -=10;
+                }
+                break;
+            case 'left':
+                div = document.getElementsByClassName('grid')[self.playerPos];
+                if(div.style.borderLeft === 'none'){
+                    self.playerPos -=1;
+                }
+                break;
+            case 'right':
+                div = document.getElementsByClassName('grid')[self.playerPos];
+                if(div.style.borderRight === 'none'){
+                    self.playerPos +=1;
+                }
+                break;
+            case 'down':
+                div = document.getElementsByClassName('grid')[self.playerPos];
+                if(div.style.borderBottom === 'none'){
+                    self.playerPos +=10;
+                }
+                break;
+            default:
+                break;
+        }
+        self.player.style.top = parseInt(self.playerPos/10) * 60 +'px';
+        self.player.style.left = (self.playerPos%10) * 60 +'px';
+
+    }
 
     document.addEventListener('keydown', function (e) {
         var key = e.which || e.keyCode;
@@ -300,15 +342,19 @@ let Kruskal = function(){
         switch (key) {
             case 87://w
             case 38://up
-                console.log('up');
                 div = document.getElementsByClassName('grid')[self.playerPos];
                 if(div.style.borderTop === 'none'){
-                    self.playerPos -=10;9
+                    self.playerPos -=10;
                 }
                 break;
             case 65://a
             case 37://left
-                console.log('left');
+                if(self.direction === 0 ){
+                    self.direction =3;
+                }else{
+                    self.direction--;
+                }
+
                 div = document.getElementsByClassName('grid')[self.playerPos];
                 if(div.style.borderLeft === 'none'){
                     self.playerPos -=1;
@@ -316,7 +362,13 @@ let Kruskal = function(){
                 break;
             case 68://d
             case 39://right
-                console.log('rigth');
+
+                if(self.direction === 3 ){
+                    self.direction = 0;
+                }else{
+                    self.direction++;
+                }
+
                 div = document.getElementsByClassName('grid')[self.playerPos];
                 if(div.style.borderRight === 'none'){
                     self.playerPos +=1;
@@ -324,7 +376,6 @@ let Kruskal = function(){
                 break;
             case 83://s
             case 40://down
-                console.log('down');
                 div = document.getElementsByClassName('grid')[self.playerPos];
                 if(div.style.borderBottom === 'none'){
                     self.playerPos +=10;

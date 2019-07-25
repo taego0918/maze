@@ -1,5 +1,12 @@
 <!DOCTYPE html>
-<head></head>
+<head>
+  <style>
+    body{
+      margin: 0px;
+      padding: 0px;
+    }
+  </style>
+</head>
 <body>
     <script src="https://unpkg.com/three"></script>
     <script>
@@ -71,7 +78,7 @@ function render() {
   cube.rotation.y += .01
   cube.rotation.z += .01
 
-//   requestAnimationFrame(render)
+  requestAnimationFrame(render)
   renderer.render(scene, camera)
 }
     </script>
