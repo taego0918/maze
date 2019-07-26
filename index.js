@@ -111,7 +111,7 @@ function init (_num) {
 
     camera.position.z = targetZ;
     camera.position.x = targetX;
-
+    
     document.addEventListener('keydown', function (e) {
         if(targetAngle!==angle || targetX!==X || targetZ!==Z){return;}
         var key = e.which || e.keyCode;
@@ -186,7 +186,6 @@ function init (_num) {
             Z = (targetZ > Z)? Z+1 : Z-1;
             camera.position.z = Z;
         }
-        
         render();
         requestAnimationFrame(animationRender);
     }
@@ -201,9 +200,10 @@ let Kruskal = function(){
     self.h = 10; 
     self.i = 0;
     self.playerPos;
-    self.direction = 0;
+    self.direction = 3;
     self.directionList = ['up','rigth','down','left']
     self.player = document.createElement('div');
+    self.angle = -90;
     
     self.getRandom = function(min,max){
         return parseInt(Math.random()* (max - min + 1 ))+min;
@@ -304,25 +304,25 @@ let Kruskal = function(){
     let move = function(_direction){
         let div;
         switch (_direction) {
-            case 'up':
+            case 0://up
                 div = document.getElementsByClassName('grid')[self.playerPos];
                 if(div.style.borderTop === 'none'){
                     self.playerPos -=10;
                 }
                 break;
-            case 'left':
+            case 3://left
                 div = document.getElementsByClassName('grid')[self.playerPos];
                 if(div.style.borderLeft === 'none'){
                     self.playerPos -=1;
                 }
                 break;
-            case 'right':
+            case 1://right
                 div = document.getElementsByClassName('grid')[self.playerPos];
                 if(div.style.borderRight === 'none'){
                     self.playerPos +=1;
                 }
                 break;
-            case 'down':
+            case 2://down
                 div = document.getElementsByClassName('grid')[self.playerPos];
                 if(div.style.borderBottom === 'none'){
                     self.playerPos +=10;
@@ -333,7 +333,6 @@ let Kruskal = function(){
         }
         self.player.style.top = parseInt(self.playerPos/10) * 60 +'px';
         self.player.style.left = (self.playerPos%10) * 60 +'px';
-
     }
 
     document.addEventListener('keydown', function (e) {
@@ -342,10 +341,7 @@ let Kruskal = function(){
         switch (key) {
             case 87://w
             case 38://up
-                div = document.getElementsByClassName('grid')[self.playerPos];
-                if(div.style.borderTop === 'none'){
-                    self.playerPos -=10;
-                }
+                move(self.direction);
                 break;
             case 65://a
             case 37://left
@@ -354,25 +350,18 @@ let Kruskal = function(){
                 }else{
                     self.direction--;
                 }
-
-                div = document.getElementsByClassName('grid')[self.playerPos];
-                if(div.style.borderLeft === 'none'){
-                    self.playerPos -=1;
-                }
+                self.angle -=90;
+                self.player.style.transform = 'rotate('+self.angle+'deg)';
                 break;
             case 68://d
             case 39://right
-
                 if(self.direction === 3 ){
                     self.direction = 0;
                 }else{
                     self.direction++;
                 }
-
-                div = document.getElementsByClassName('grid')[self.playerPos];
-                if(div.style.borderRight === 'none'){
-                    self.playerPos +=1;
-                }
+                self.angle +=90;
+                self.player.style.transform = 'rotate('+self.angle+'deg)';
                 break;
             case 83://s
             case 40://down
@@ -393,6 +382,7 @@ let Kruskal = function(){
         self.player.className = 'player';
         self.player.style.top = parseInt(self.playerPos/10) * 60 +'px';
         self.player.style.left = (self.playerPos%10) * 60 +'px';
+        self.player.style.transform = 'rotate('+self.angle+'deg)';
         self.main.appendChild(self.player);
         init(self.playerPos);
     }
